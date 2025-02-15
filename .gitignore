@@ -67,3 +67,7 @@ nb-configuration.xml
 # vi swap files
 *.swp
 *.swo
+gradle.properties
+.settings/org.eclipse.buildship.core.prefs
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
