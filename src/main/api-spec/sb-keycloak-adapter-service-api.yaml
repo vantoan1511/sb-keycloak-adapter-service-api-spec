@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 
 info:
-  version: 0.0.2
+  version: 0.0.3
   title: Keycloak Adapter Service API
   license:
     name: Copyright by sb-keycloak-adapter-service-api-spec, all rights reserved.
