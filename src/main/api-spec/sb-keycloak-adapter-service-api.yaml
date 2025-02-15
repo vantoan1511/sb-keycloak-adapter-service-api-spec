@@ -1,0 +1,228 @@
+openapi: "3.0.3"
+
+info:
+  version: 0.0.1
+  title: Keycloak Adapter Service API
+  license:
+    name: Copyright by sb-keycloak-adapter-service-api-spec, all rights reserved.
+
+tags:
+  - name: realms
+    description: Operations about realms
+  - name: users
+    description: Operations about users
+
+paths:
+  /realms/{realmName}/users:
+    get:
+      summary: Get all users in a realm
+      operationId: getUsers
+      tags:
+        - users
+      parameters:
+        - $ref: "#/components/parameters/realmName"
+      responses:
+        200:
+          description: An array of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDTO"
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+        503:
+          description: Service Unavailable
+    post:
+      summary: Create a user
+      operationId: createUser
+      tags:
+        - users
+      parameters:
+        - $ref: "#/components/parameters/realmName"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/UserDTO"
+                - type: object
+                  properties:
+                    id:
+                      readOnly: true
+                    emailVerified:
+                      default: false
+                    enabled:
+                      default: false
+                  required:
+                    - username
+                    - email
+                    - firstName
+                    - lastName
+      responses:
+        201:
+          description: Created user
+          headers:
+            Location:
+              description: The location of the created user
+              schema:
+                type: string
+                format: uri
+                example: /realms/realmName/users/123e4567-e89b-12d3-a456-426614174000
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+        409:
+          description: Conflict
+        503:
+          description: Service Unavailable
+
+  /realms/{realmName}/users/{userId}:
+    get:
+      summary: Get a user by ID
+      operationId: getUserById
+      tags:
+        - users
+      parameters:
+        - $ref: "#/components/parameters/realmName"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+        503:
+          description: Service Unavailable
+    put:
+      summary: Update a user by ID
+      operationId: updateUserById
+      tags:
+        - users
+      parameters:
+        - $ref: "#/components/parameters/realmName"
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/UserDTO"
+                - type: object
+                  properties:
+                    id:
+                      readOnly: true
+                    username:
+                      readOnly: true
+                    emailVerified:
+                      default: false
+                    enabled:
+                      default: false
+                  required:
+                    - email
+                    - firstName
+                    - lastName
+      responses:
+        200:
+          description: Updated user
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+        409:
+          description: Conflict
+        503:
+          description: Service Unavailable
+    delete:
+      summary: Delete a user by ID
+      operationId: deleteUserById
+      tags:
+        - users
+      parameters:
+        - $ref: "#/components/parameters/realmName"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        204:
+          description: No Content
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+        503:
+          description: Service Unavailable
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    realmName:
+      name: realmName
+      in: path
+      required: true
+      description: The name of the realm
+      schema:
+        type: string
+    userId:
+      name: userId
+      in: path
+      required: true
+      description: The ID of the user
+      schema:
+        type: string
+  schemas:
+    UserDTO:
+      properties:
+        id:
+          type: string
+          description: ID of the user (UUID).
+          example: 123e4567-e89b-12d3-a456-426614174000
+        username:
+          type: string
+          description: Username of the user.
+          example: johndoe
+        email:
+          type: string
+          format: email
+          description: Email of the user.
+          example: johndoe123@gmail.com
+        firstName:
+          type: string
+          description: First name of the user.
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user.
+          example: Doe
+        enabled:
+          type: boolean
+          description: Whether the user is enabled or not.
+          example: true
+        emailVerified:
+          type: boolean
+          description: Whether the user's email is verified or not.
+          example: true
