@@ -1,4 +1,4 @@
-# sb-keycloak-adapter-service-api-spec
+# keycloak-adapter-api
 
 The implementation of the sb-keycloak-adapter-service-api-spec.
 
